@@ -1,0 +1,1 @@
+Arquitetura e Escopo: Em código novo ou em trechos que claramente vão evoluir, favoreça clean code e SOLID, com ênfase em responsabilidade única (SRP) e extensão sem modificação desnecessária (OCP).

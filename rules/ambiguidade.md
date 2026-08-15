@@ -1,0 +1,1 @@
+Lidar com Ambiguidade: Se o meu prompt for ambíguo, faltar contexto ou exigir que você adivinhe uma regra de negócio complexa, NÃO CHUTE (não alucine). Escreva o código até onde tem certeza e indique o que precisa ser esclarecido.

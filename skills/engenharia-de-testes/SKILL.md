@@ -30,3 +30,37 @@ Ao escrever testes unitários, de integração ou E2E para novas funcionalidades
 
 - Escrever testes frágeis que testam detalhes de implementação (ex: nome de variáveis internas) em vez de comportamento.
 - Criar mocks vazios que sempre retornam sucesso absoluto.
+
+## Pirâmide de Testes (quando usar cada tipo)
+
+- **Unitários:** lógica de domínio pura, funções sem side-effects, validações — a maioria dos testes deve ser aqui. Rápidos, baratos, determinísticos.
+- **Integração:** I/O real (banco, file system, HTTP interno) — menos testes, mais valor por teste. Usam containers ou serviços reais em ambiente controlado.
+- **E2E:** fluxos críticos de negócio do ponto de vista do usuário — poucos, caros, só para o que não pode quebrar silenciosamente.
+- **Regra de ouro:** se um teste unitário obriga um mock de 5+ dependências, provavelmente é um teste de integração disfarçado — promova-o em vez de empilhar mocks.
+
+## Critério de pronto para cobertura
+
+- **Mínimo:** todos os cenários do Checklist rápido cobertos (não uma % arbitrária de coverage).
+- **Preferível:** branch coverage nos caminhos de erro do caso de uso testado.
+- **Proibido:** contar cobertura de linhas de boilerplate (getters, DI wiring, constantes) como progresso real.
+
+**SIM / NÃO:**
+
+```
+// NÃO — teste que existe só para inflar cobertura
+test('getter retorna valor', () => {
+  expect(user.getName()).toBe('João');
+});
+
+// SIM — testa um caminho de erro com impacto real
+test('rejeita pedido com desconto > 100%', () => {
+  expect(() => aplicarDesconto(pedido, 150)).toThrow('Desconto inválido');
+});
+```
+
+## Testes de contrato (quando houver APIs entre serviços)
+
+- Definir e versionar o contrato do consumidor antes de escrever o provider.
+- Testes de contrato são unitários — não dependem de serviço rodando.
+- Quando o contrato mudar, ambos os lados (consumidor e provider) devem ser atualizados antes de merge.
+

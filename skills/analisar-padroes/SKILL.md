@@ -32,3 +32,25 @@ Antes de implementar algo novo (funcionalidade, endpoint, componente, hook, serv
 
 - Inventar estrutura nova sem olhar o que já existe no mesmo módulo/time.
 - Copiar um arquivo inteiro sem entender por que a referência foi feita assim (contexto pode diferir).
+
+## Quando quebrar o padrão existente (conscientemente)
+
+Divergir do padrão é permitido — mas nunca silenciosamente. Situações válidas:
+
+- O padrão existente tem um **bug identificado** ou **vulnerabilidade de segurança**
+- O time está em **migração documentada** para um novo padrão (verificar se existe ADR ou nota em `.ai/context.md`)
+- O padrão existente **não escala** para o caso de uso atual (documentar o motivo)
+
+**Procedimento:** antes de divergir, anote explicitamente no diff/PR por que o padrão existente não foi seguido. Nunca divergir silenciosamente.
+
+**SIM / NÃO:**
+
+```
+// NÃO — divergir sem explicação
+// (usa fetch direto quando todo o projeto usa um httpClient wrapper)
+
+// SIM — divergir com justificativa
+// Este endpoint usa fetch nativo porque o httpClient não suporta streaming.
+// Ver ADR-003 para migração planejada do httpClient.
+```
+

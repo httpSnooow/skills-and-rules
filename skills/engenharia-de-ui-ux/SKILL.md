@@ -19,6 +19,11 @@ Ao criar, refatorar ou atualizar elementos de interface gráfica no frontend (co
 2. **Arquitetura dos 5 Estados (UX Defensiva)**: Mapear e implementar explicitamente todos os cenários da interface: *Ideal State* (dados carregados), *Loading State* (Skeletons/Shimmers), *Empty State* (sem dados), *Error State* (falhas com opção de *Retry*) e *Partial State*.
 3. **Acessibilidade Ouro (A11y/WCAG)**: Garantir suporte nativo a leitores de tela (atributos `aria-*`, `role`), navegação funcional via teclado (com `:focus-visible`) e alvos de toque ergonômicos (mínimo de 44x44px para interações).
 4. **Hierarquia e Micro-interações**: Aplicar feedbacks visuais imediatos para todas as ações do usuário (estados de `:hover`, `:active`, `:disabled`) e limitar a hierarquia tipográfica a no máximo 3 tamanhos/pesos por contexto para evitar poluição visual.
+5. **Responsividade e Mobile-First**:
+   - Implementar sempre mobile-first: estilos base para o menor breakpoint, sobreposições (`@media min-width`) para telas maiores.
+   - Breakpoints de referência (adaptar ao design system do projeto): `sm=640px`, `md=768px`, `lg=1024px`, `xl=1280px`.
+   - Nunca usar valores de largura fixos em componentes que precisem funcionar em múltiplos contextos — usar `max-width` + `width: 100%`.
+   - Testar mentalmente em **375px (iPhone SE)** antes de considerar pronto qualquer componente visual.
 
 ## Checklist rápido
 
@@ -26,6 +31,8 @@ Ao criar, refatorar ou atualizar elementos de interface gráfica no frontend (co
 - [ ] O componente trata cenários de *Loading* (Skeleton), *Error* (falhas de rede) e *Empty* de forma fluida?
 - [ ] Elementos interativos possuem área de clique acessível, suporte a teclado (Tab) e não removem o outline de foco sem um substituto visual?
 - [ ] Ações destrutivas (ex: exclusão) possuem confirmação e ações assíncronas fornecem feedback imediato (ex: desabilita botão e exibe spinner)?
+- [ ] O componente funciona em viewport 375px sem scroll horizontal ou conteúdo cortado?
+- [ ] Skeletons têm dimensões explícitas (width + height definidos) para reservar espaço e evitar Layout Shift?
 
 ## O que evitar
 

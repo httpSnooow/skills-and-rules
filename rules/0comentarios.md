@@ -25,7 +25,9 @@ Os seguintes tipos de anotação **são permitidos** porque têm função técni
 
 3. **`// TODO(TICKET-ID): descrição`** — rastreável por ferramenta (deve conter um identificador de issue/ticket). `// TODO: melhorar isso` sem rastreamento é proibido.
 
-4. **`// ATENÇÃO:` ou `// WARNING:`** — para sinalizar bugs latentes, comportamentos contra-intuitivos ou vulnerabilidades identificadas que não serão corrigidas no escopo atual.
+4. **`// FIXME(TICKET-ID): descrição`** — para código que *está funcionando mas contém débito técnico imediato*: workaround temporário com data de validade, lógica errada que não quebrou ainda, ou solução que precisa ser reescrita antes de escalar. Requer identificador rastreável, assim como o TODO. `// FIXME: isso tá feio` sem rastreamento é proibido.
+
+5. **`// ATENÇÃO:` ou `// WARNING:`** — para sinalizar bugs latentes, comportamentos contra-intuitivos ou vulnerabilidades identificadas que não serão corrigidas no escopo atual.
 
 ## O que continua proibido
 

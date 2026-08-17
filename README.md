@@ -1,6 +1,6 @@
 <div align="center">
 
-![header](https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=24&height=220&section=header&text=skills%20%2526%20rules&fontSize=60&fontColor=ffffff&fontAlignY=38&desc=AI%20Agent%20Customizations%20for%20Antigravity%2C%20Cursor%2C%20Claude%20Code%20%26%20Copilot&descAlignY=58&descSize=15&descColor=c4b5fd)
+![header](https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=24&height=220&section=header&text=skills%20%2526%20rules&fontSize=60&fontColor=ffffff&fontAlignY=38&desc=AI%20Agent%20Customizations%20for%20Antigravity%2C%20Cursor%2C%20Claude%20Code%20%2526%20Copilot&descAlignY=58&descSize=15&descColor=c4b5fd)
 
 [![Skills](https://img.shields.io/badge/skills-14-7c3aed?style=flat-square&logo=gitbook&logoColor=white)](./skills)
 [![Rules](https://img.shields.io/badge/rules-12-06b6d4?style=flat-square&logo=markdown&logoColor=white)](./rules)

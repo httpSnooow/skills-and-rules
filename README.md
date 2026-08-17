@@ -12,13 +12,6 @@
 
 </div>
 
-> **Um toolkit production-grade de skills e rules.**
-> Adicione ao Antigravity, Cursor, Claude Code ou Copilot.
-
-<br/>
-
----
-
 ## 📋 Índice
 
 - [O que é isso?](#-o-que-é-isso)

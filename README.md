@@ -12,8 +12,8 @@
 
 </div>
 
-> **Um toolkit production-grade de skills e rules que transforma qualquer agente de IA em um engenheiro sênior.**
-> Adicione ao Antigravity, Cursor, Claude Code ou Copilot e veja seu agente parar de adivinhar e começar a entregar.
+> **Um toolkit production-grade de skills e rules.**
+> Adicione ao Antigravity, Cursor, Claude Code ou Copilot.
 
 <br/>
 

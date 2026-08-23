@@ -1,38 +1,49 @@
 # Exemplo de referência — modal completo (entrada + saída + reduced-motion + foco)
 
-Consultar este arquivo como exemplo de como as peças do `SKILL.md` se combinam num componente real. Não é uma técnica isolada como o FLIP — é a montagem ponta a ponta de tokens, performance de compositor, `prefers-reduced-motion` e gerenciamento de foco (item 6.2) num único componente, do jeito que apareceriam juntos numa implementação real.
+Consultar este arquivo como exemplo de como as peças do `SKILL.md` se combinam num
+componente real. Não é uma técnica isolada como o FLIP — é a montagem ponta a ponta de
+tokens, performance de compositor, `prefers-reduced-motion` e gerenciamento de foco
+(item 6.2) num único componente, do jeito que apareceriam juntos numa implementação real.
 
 ## Tokens usados (definidos uma vez, centralizados — item 1)
 
 ```css
 :root {
-  --motion-duration-component: 300ms;      /* entrada */
-  --motion-duration-component-exit: 200ms; /* saída — mais rápida que a entrada */
+  --motion-duration-component:      300ms;  /* entrada */
+  --motion-duration-component-exit: 200ms;  /* saída — mais rápida que a entrada */
+
+  /* Família M3 Motion — Emphasized Decelerate para entrada, Accelerate para saída */
   --motion-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --motion-easing-enter:    cubic-bezier(0.05, 0.7, 0.1, 1.0);  /* Emphasized Decelerate */
+  --motion-easing-exit:     cubic-bezier(0.3, 0, 0.8, 0.15);    /* Emphasized Accelerate */
 }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+    animation-duration:        0.01ms !important;
+    animation-iteration-count: 1      !important;
+    transition-duration:       0.01ms !important;
+    scroll-behavior:           auto   !important;
   }
 }
 ```
 
 ## CSS do modal (apenas `transform`/`opacity` — item 3)
 
+Entrada usa `--motion-easing-enter` (Emphasized Decelerate — desacelera ao pousar).
+Saída usa `--motion-easing-exit` (Emphasized Accelerate — parte rápido, sem cerimônia).
+
 ```css
 .modal-overlay {
   opacity: 0;
-  transition: opacity var(--motion-duration-component) var(--motion-easing-standard);
+  transition: opacity var(--motion-duration-component) var(--motion-easing-enter);
 }
 .modal-overlay.is-open {
   opacity: 1;
 }
 .modal-overlay.is-closing {
   transition-duration: var(--motion-duration-component-exit);
+  transition-timing-function: var(--motion-easing-exit);
   opacity: 0;
 }
 
@@ -40,15 +51,16 @@ Consultar este arquivo como exemplo de como as peças do `SKILL.md` se combinam 
   transform: translateY(16px) scale(0.98);
   opacity: 0;
   transition:
-    transform var(--motion-duration-component) var(--motion-easing-standard),
-    opacity var(--motion-duration-component) var(--motion-easing-standard);
+    transform var(--motion-duration-component) var(--motion-easing-enter),
+    opacity   var(--motion-duration-component) var(--motion-easing-enter);
 }
 .modal-panel.is-open {
   transform: translateY(0) scale(1);
   opacity: 1;
 }
 .modal-panel.is-closing {
-  transition-duration: var(--motion-duration-component-exit);
+  transition-duration:        var(--motion-duration-component-exit);
+  transition-timing-function: var(--motion-easing-exit);
   transform: translateY(8px) scale(0.98);
   opacity: 0;
 }
@@ -56,7 +68,9 @@ Consultar este arquivo como exemplo de como as peças do `SKILL.md` se combinam 
 
 ## JS — sequenciamento de estado, animação e foco (item 6.2)
 
-O ponto central deste exemplo: o foco só se move **depois** que a animação de entrada termina, e o elemento só sai da árvore de acessibilidade **depois** que a animação de saída termina — nunca no início de nenhuma das duas.
+O ponto central deste exemplo: o foco só se move **depois** que a animação de entrada
+termina, e o elemento só sai da árvore de acessibilidade **depois** que a animação de
+saída termina — nunca no início de nenhuma das duas.
 
 ```js
 function openModal(modal, overlay, triggerEl) {
@@ -96,9 +110,19 @@ function closeModal(modal, overlay, triggerEl) {
 ## Por que este exemplo, e não só as peças isoladas
 
 - Os **tokens** (item 1) evitam duração/easing soltos no componente.
+- Entrada usa **Emphasized Decelerate** (`--motion-easing-enter`), saída usa **Emphasized
+  Accelerate** (`--motion-easing-exit`) — aplicação correta das curvas M3 por direção de
+  movimento.
 - O CSS anima **só `transform`/`opacity`** (item 3), nunca `top`/`margin`/`display`.
 - A duração de **saída é menor que a de entrada** (200ms vs 300ms — item 1).
-- O bloco `prefers-reduced-motion` (item 5) zera as durações globalmente sem exigir nenhuma lógica condicional adicional no JS acima — o `transitionend` ainda dispara, só que quase instantaneamente.
-- O foco só se move após `transitionend` da entrada, e o `inert` só é reaplicado após `transitionend` da saída (item 6.2) — é o sequenciamento que a maioria das implementações "no achismo" pula, movendo o foco no mesmo instante em que a classe `is-open` é aplicada.
+- O bloco `prefers-reduced-motion` (item 5) zera as durações globalmente sem exigir
+  nenhuma lógica condicional adicional no JS acima — o `transitionend` ainda dispara, só
+  que quase instantaneamente.
+- O foco só se move após `transitionend` da entrada, e o `inert` só é reaplicado após
+  `transitionend` da saída (item 6.2) — é o sequenciamento que a maioria das
+  implementações "no achismo" pula, movendo o foco no mesmo instante em que a classe
+  `is-open` é aplicada.
 
-Para replicar este padrão num componente diferente (drawer, toast), manter a mesma estrutura de: (1) tornar visível/focável → (2) aplicar classe de animação → (3) esperar `transitionend` → (4) só então mover foco ou retirar da árvore de acessibilidade.
+Para replicar este padrão num componente diferente (drawer, toast), manter a mesma
+estrutura de: (1) tornar visível/focável → (2) aplicar classe de animação → (3) esperar
+`transitionend` → (4) só então mover foco ou retirar da árvore de acessibilidade.

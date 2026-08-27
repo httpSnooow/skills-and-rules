@@ -5,6 +5,7 @@
 - Uma função faz **uma coisa**. Se a descrição da função contém mais de um "e" (ex: "valida o input **e** salva no banco **e** envia o email"), ela faz coisa demais — quebre.
 - Referência de tamanho: ~30 linhas de lógica (não contando imports, tipos e linhas em branco). Se não cabe em uma tela sem scroll, provavelmente faz demais.
 - Funções maiores são aceitáveis quando a complexidade é inerentemente sequencial (ex: um pipeline de transformação com 10 etapas claras) — desde que cada etapa tenha nome legível.
+- Funções menores que 3 linhas são aceitáveis apenas quando: (1) encapsulam uma regra de negócio com nome expressivo, ou (2) são callbacks de uma única expressão. Fragmentar código em dezenas de funções de 1 linha por obsessão com SRP prejudica a legibilidade tanto quanto funções gigantes.
 
 **SIM / NÃO:**
 

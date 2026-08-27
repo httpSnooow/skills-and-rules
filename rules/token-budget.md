@@ -2,10 +2,18 @@
 
 ## 1. Pense antes de codar
 
-Antes de qualquer implementação não trivial, exiba um plano de 3-5 linhas do que vai ser feito e aguarde confirmação. Não inicie código sem alinhamento em tarefas com escopo ambíguo.
+Antes de qualquer implementação não trivial, exiba um plano de 3-5 bullet points do que vai ser feito e aguarde confirmação. Não inicie código sem alinhamento em tarefas com escopo ambíguo.
 
 **Trivial (pode ir direto):** fix de typo, renomear variável, adicionar import, ajustar valor de constante.
 **Não trivial (exige plano):** nova funcionalidade, refatoração, mudança de contrato, correção de bug com causa incerta.
+
+**Formato esperado do plano:**
+- Criar entidade `Pedido` com regras de validação de desconto
+- Criar `PedidoRepository` com query de busca por usuário
+- Criar `PedidoService` orquestrando domínio e repositório
+- Criar endpoint `POST /pedidos` com validação de input e tratamento de erro
+
+**Não incluir no plano:** detalhes de implementação, escolha de nomes, imports — isso vem na implementação.
 
 ## 2. Solução mais simples primeiro
 

@@ -19,3 +19,14 @@
 - Ao identificar que uma dependência é necessária, liste: nome do pacote, versão mínima sugerida, motivo, e se existe alternativa nativa.
 - A decisão de adicionar qualquer dependência ao `package.json` / `requirements.txt` / `Cargo.toml` é **100% do usuário**.
 - **Exceção:** instalar dependências de desenvolvimento listadas num `package.json` já existente (ex: `npm install` puro para restaurar `node_modules`) é permitido.
+
+## 5. Operações Destrutivas de Banco de Dados
+
+- **NUNCA** execute comandos destrutivos de banco diretamente (`DROP TABLE`, `DELETE` sem `WHERE`, `TRUNCATE`, `ALTER TABLE` com perda de dados).
+- Ao gerar uma migration destrutiva, exibir o SQL como bloco de código para revisão manual — nunca executar via ferramenta de terminal.
+- **Exceção:** migrations de ambiente local de desenvolvimento explicitamente solicitadas pelo usuário em contexto de reset de ambiente.
+
+## 6. Chamadas de API Externa com Side-Effects
+
+- **NUNCA** execute chamadas de API externa que produzam side-effects reais (envio de email, cobrança, criação de webhook, POST para APIs de terceiros com dados reais) sem confirmação explícita do usuário.
+- Ao identificar que um teste requer dados reais de produção, sinalizar e propor mock/stub em vez de chamar a API diretamente.

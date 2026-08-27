@@ -28,6 +28,18 @@ const usuarioMap = Object.fromEntries(usuarios.map(u => [u.id, u]));
 const pedidosComUsuario = pedidos.map(p => ({ ...p, usuario: usuarioMap[p.userId] }));
 ```
 
+**Kotlin/Spring + JPA:**
+
+```kotlin
+// NÃO — lazy loading implícito dispara 1 query por pedido
+val pedidos = pedidoRepository.findAll()
+pedidos.forEach { println(it.usuario.nome) } // N queries adicionais
+
+// SIM — eager loading com JOIN FETCH
+@Query("SELECT p FROM Pedido p JOIN FETCH p.usuario")
+fun findAllWithUsuario(): List<Pedido>
+```
+
 Ao detectar um N+1 no código sendo gerado ou revisado, **sinalizar imediatamente** antes de continuar.
 
 ## 2. Paginação: Cursores em vez de Offsets grandes
@@ -173,3 +185,24 @@ async function updateUser(userId, data) {
 - Usar `SELECT *` quando apenas 2-3 colunas são necessárias.
 - Criar índices em colunas de baixa cardinalidade (ex: coluna booleana `ativo`) — não ajuda.
 - Usar `ORDER BY RAND()` ou equivalente em tabelas grandes — full table scan garantido.
+
+## 8. Connection Pooling — Nunca Criar Conexão por Request
+
+Nunca criar uma conexão de banco a cada request sem pool. Em Spring Boot, HikariCP é o padrão
+— configurar `maximum-pool-size` explicitamente (o padrão de 10 é insuficiente para produção com carga).
+
+**Sinais de problema:**
+- `HikariPool-1 - Connection is not available, request timed out` → pool esgotado
+- Queries lentas em horário de pico sem mudança de volume → pool sub-dimensionado
+
+**Configuração mínima para Spring Boot (`application.yml`):**
+
+```yaml
+spring.datasource.hikari:
+  maximum-pool-size: 20        # ajustar por carga real; nunca deixar no padrão 10 em produção
+  minimum-idle: 5
+  connection-timeout: 30000    # 30s máximo para obter conexão do pool
+  idle-timeout: 600000         # 10min idle antes de fechar
+```
+
+Ao gerar código Spring Boot com datasource, verificar se a configuração de pool está presente.

@@ -44,7 +44,9 @@ try {
 ## 2. Retry com Exponential Backoff e Jitter
 
 Falhas transitórias (rede instável, rate limit, serviço reiniciando) se resolvem com retry.
-Falhas permanentes (404, 400, autenticação inválida) **não devem ser retriadas**.
+Falhas permanentes (404, 400, 401, 403, 422 — erros do cliente) **não devem ser retriadas**.
+**Exceção: 429 (Rate Limit)** — é 4xx mas representa falha transitória. Retriar com backoff
+maior (mínimo o valor do header `Retry-After` se presente, senão 60s de base).
 
 **SIM / NÃO:**
 

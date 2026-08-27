@@ -83,25 +83,12 @@ de índice), mas nunca expô-los na API.
 
 ## 4. Paginação Padronizada
 
-```json
-// SIM — cursor-based, compatível com coleções que crescem
-{
-  "data": [...],
-  "meta": {
-    "nextCursor": "eyJpZCI6MTAwfQ==",
-    "hasMore": true,
-    "total": null  // evitar COUNT(*) — retornar só quando explicitamente pedido
-  }
-}
+Usar cursor-based pagination — detalhes, exemplos e justificativa de complexidade em `performance-e-escala.md`, Seção 2.
 
-// NÃO — page/offset expõe problema de escala e quebra com inserções concorrentes
-{
-  "data": [...],
-  "page": 5,
-  "totalPages": 100,
-  "total": 2000
-}
-```
+Regras de contrato:
+- O payload de cursor deve usar o campo `nextCursor` (string opaca, base64) e `hasMore` (boolean).
+- Nunca expor `page`/`totalPages` — incompatível com coleções que crescem e inserções concorrentes.
+- `total` só quando explicitamente pedido pelo cliente — `COUNT(*)` é caro e não escala.
 
 ## 5. Campos Obrigatórios vs Opcionais na Request
 
@@ -111,20 +98,12 @@ de índice), mas nunca expô-los na API.
 
 ## 6. Idempotência em Operações Mutantes
 
-Operações que mudam estado devem ser idempotentes — o cliente pode retentar sem efeito colateral duplo.
+Operações que mudam estado devem ser idempotentes — implementação com Idempotency-Key em `resiliencia-e-fallback.md`, Seção 5.
 
-```
-// POST /pagamentos sem idempotência → cobrança dupla se a rede falhar e o cliente retentar
-
-// POST /pagamentos com chave de idempotência → retenta com segurança
-POST /pagamentos
-Idempotency-Key: a1b2c3d4-e5f6-...  // gerado pelo cliente, único por operação
-
-// Segunda chamada com mesma chave retorna o resultado original sem cobrar de novo
-```
-
-**Campos sensíveis:** operações financeiras, envio de email, criação de recursos únicos.
-Sugerir ao usuário implementar idempotency keys quando detectar esses padrões.
+Regras de contrato:
+- Campos sensíveis obrigatórios: operações financeiras, envio de email/SMS, criação de recursos únicos, webhooks recebidos de terceiros.
+- O cliente gera a chave uma vez por operação (não por retry) — deve ser UUID v4 ou equivalente.
+- O servidor retorna o resultado original sem reprocessar se a chave já foi processada.
 
 ## 7. Tolerância a Novos Valores (Postel's Law)
 
@@ -153,8 +132,52 @@ if (status === 'pendente' || status === 'processando') {
 - Datas em formato não-padronizado — sempre ISO 8601 UTC (`2024-01-15T10:30:00Z`).
 - Misturar snake_case e camelCase na mesma API.
 
+## 8. GraphQL — Contratos de Schema
+
+Quando a API usa GraphQL:
+- **Nunca remover um campo do schema** sem deprecar primeiro com `@deprecated(reason: "Use X em vez disso")`.
+- **Erros de negócio** vão no array `errors` da response — nunca HTTP 200 com `data: null` sem explicação no `errors`.
+- **N+1 em resolvers:** cada resolver que acessa banco deve usar DataLoader — ver `performance-e-escala.md` Seção 1.
+- **Mutações** seguem as mesmas regras de idempotência de REST (Seção 6 desta rule).
+
+## 9. Webhooks — Receptor Seguro e Assimíncrono
+
+Ao implementar endpoints receptores de webhook:
+
+```typescript
+// SIM — verificar assinatura HMAC antes de processar
+async function receberWebhook(req: Request, res: Response) {
+  const assinatura = req.headers['x-signature-256'];
+  const payload = req.body;
+
+  if (!verificarHmac(payload, assinatura, process.env.WEBHOOK_SECRET)) {
+    return res.status(401).end();
+  }
+
+  res.status(200).end(); // responder 200 imediatamente
+  await fila.publicar('webhook.recebido', payload); // processar de forma assíncrona
+}
+
+// NÃO — processar sincronamente: o provider vai retentar se não receber 200 rápido
+```
+
+**Regras de webhook:**
+- Verificar assinatura HMAC antes de qualquer processamento (`X-Signature-256` ou equiv.).
+- Responder HTTP 200 imediatamente e processar de forma assíncrona.
+- Implementar idempotência no receptor — o mesmo evento pode ser entregue mais de uma vez.
+
+## 10. Deprecation de Versão de API
+
+Ao descontinuar uma versão de API:
+- Adicionar o header `Sunset: <data ISO 8601>` nas respostas da versão deprecated (RFC 8594).
+- Adicionar `Deprecation: true` como header adicional de sinalização.
+- Manter a versão antiga funcionando pelo período mínimo declarado antes do sunset.
+- Nunca remover uma versão sem o header `Sunset` ter ficado ativo por pelo menos 30 dias.
+
 ## Referências
 
 - [Google API Design Guide](https://cloud.google.com/apis/design)
 - [Stripe API Design Principles](https://stripe.com/blog/payment-api-design)
 - [API Improvement Proposals — aip.dev](https://aip.dev/)
+- [RFC 8594 — Sunset HTTP Header](https://www.rfc-editor.org/rfc/rfc8594)
+

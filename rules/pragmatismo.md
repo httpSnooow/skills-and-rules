@@ -10,7 +10,15 @@ Quando o código ao redor do escopo pedido apresenta problemas:
 
 - **Bug latente ou vulnerabilidade identificável:** sinalize com `// ATENÇÃO: [descrição do problema]` no código e descreva no final da resposta em `## Observações fora do escopo`. **Não refatore** sem confirmação do usuário.
 - **Apenas estilo/preferência:** ignore. O escopo não inclui melhorias cosméticas não solicitadas.
-- **Código morto ou import não utilizado no trecho tocado:** pode remover silenciosamente se estiver na mesma função/bloco alterado.
+- **Código morto ou import não utilizado no trecho tocado:** pode remover silenciosamente se estiver na mesma função/bloco alterado — mencione na seção de observações se não for óbvio.
+
+**Formato esperado da seção:**
+
+```
+## Observações fora do escopo
+- **[arquivo:linha]** `// ATENÇÃO: fetchProduto() não tem timeout — pode segurar a thread indefinidamente se a API externa travar.`
+  Recomendo adicionar timeout de 5s antes do próximo deploy. Não alterei pois está fora do escopo pedido.
+```
 
 ## Intervenção imediata (sem pedir confirmação)
 

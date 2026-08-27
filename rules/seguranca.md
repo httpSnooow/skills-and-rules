@@ -2,6 +2,18 @@
 
 > **Esta é a rule de maior prioridade.** Em caso de conflito com qualquer outra rule, `seguranca.md` vence.
 
+## Hierarquia Completa de Rules (ordem de precedência)
+
+Em caso de conflito entre rules, respeitar esta ordem:
+
+1. `seguranca.md` — segurança sempre vence tudo
+2. `limites.md` — proibições absolutas de execução autônoma
+3. `pragmatismo.md` — escopo e proporcionalidade de intervenção
+4. `contratos-e-api-design.md` + `resiliencia-e-fallback.md` + `performance-e-escala.md` — qualidade técnica (mesmo nível)
+5. `codigo-operacional.md` + `0comentarios.md` — estilo de código (mesmo nível)
+6. `token-budget.md` + `fluxo-humano.md` + `ambiguidade.md` — comportamento interacional (mesmo nível)
+7. `convencoes-projeto.md` — contexto específico do projeto ativo (pode sobrescrever itens do nível 5)
+
 ## Regras permanentes (aplicar sempre, sem exceção)
 
 ### 1. Zero secrets no código
@@ -57,7 +69,7 @@ Qualquer dado que vem de usuário e é renderizado em HTML deve ser sanitizado o
 
 ### 5. Dependências
 
-Ao sugerir um pacote novo, verificar se tem histórico de CVE crítico nos últimos 12 meses e mencionar ao usuário. Preferir pacotes com manutenção ativa e downloads expressivos.
+Ao sugerir um pacote novo, mencionar ao usuário que deve auditar o histórico de CVE antes de adotar (via `npm audit`, `snyk`, ou [nvd.nist.gov](https://nvd.nist.gov)). Preferir pacotes com manutenção ativa (último commit < 6 meses) e downloads expressivos. Se o pacote for substituto de um pacote conhecido como deprecated ou com CVE público reconhecido, sinalizar explicitamente.
 
 ### 6. Mensagens de erro
 
@@ -78,7 +90,7 @@ res.status(500).json({ error: 'Erro interno. Tente novamente.' });
 
 Endpoints que executam ações com side-effects (POST, PUT, DELETE, PATCH) em aplicações
 web que utilizam cookies para autenticação **devem** exigir proteção anti-CSRF:
-- Usar token anti-CSRF (ex: `csurf`, `django.middleware.csrf`) **ou**
+- Usar token anti-CSRF (`django.middleware.csrf` para Django; `csrf-csrf` para Express/Node.js — **atenção: o pacote `csurf` está deprecated desde 2023 e não deve ser usado em projetos novos**) **ou**
 - Definir `SameSite=Strict` ou `SameSite=Lax` nos cookies de sessão.
 
 Nunca gerar um formulário HTML com ação de escrita sem proteção anti-CSRF em sistemas
@@ -114,6 +126,52 @@ verificar e mencionar ao usuário:
 - Recomendação: usar registro privado com `--registry` explícito, ou configurar
   `publishConfig` com `access: restricted` e garantir que o CI usa o registry correto.
 
+### 10. SSRF (Server-Side Request Forgery)
+
+Nunca gerar código que faz requests HTTP para URLs fornecidas diretamente por input de usuário sem validação.
+
+**SIM / NÃO:**
+
+```
+// NÃO — qualquer URL que o usuário fornecer pode acessar serviços internos
+async function importarDados(url) {
+  return fetch(url); // http://169.254.169.254 (AWS metadata), http://localhost:8080/admin
+}
+
+// SIM — allowlist de hosts permitidos
+const HOSTS_PERMITIDOS = new Set(['api.parceiro.com', 'data.fornecedor.com']);
+
+async function importarDados(url) {
+  const parsed = new URL(url);
+  if (!HOSTS_PERMITIDOS.has(parsed.hostname)) {
+    throw new ForbiddenError('Host não permitido');
+  }
+  return fetch(url);
+}
+```
+
+### 11. Mass Assignment
+
+Nunca gerar endpoints que mapeiam o body da request diretamente para uma entidade sem lista explícita de campos permitidos. Campos como `role`, `isAdmin`, `plano` podem ser sobrescritos.
+
+**SIM / NÃO:**
+
+```kotlin
+// NÃO — Spring Boot: qualquer campo do JSON pode sobrescrever campos internos
+@PutMapping("/users/{id}")
+fun update(@RequestBody user: User): User = userRepo.save(user)
+
+// SIM — DTO com apenas os campos editáveis pelo usuário
+@PutMapping("/users/{id}")
+fun update(@RequestBody dto: UserUpdateDto, @PathVariable id: UUID): User {
+  val user = userRepo.findById(id).orElseThrow()
+  user.nome = dto.nome
+  user.email = dto.email
+  // `role` e `isAdmin` não estão no DTO — não podem ser alterados via request
+  return userRepo.save(user)
+}
+```
+
 ## Proibição absoluta (intervenção imediata)
 
 Nos seguintes casos, **sinalizar e corrigir antes de qualquer outra coisa**, independentemente do escopo da task. Não aguardar confirmação do usuário:
@@ -125,5 +183,7 @@ Nos seguintes casos, **sinalizar e corrigir antes de qualquer outra coisa**, ind
 | SQL por concatenação com input não sanitizado | Sinalizar, não gerar o código assim |
 | Acesso a recurso por ID sem verificação de propriedade (IDOR) | Sinalizar, adicionar verificação |
 | Formulário POST sem proteção anti-CSRF em app com cookie auth | Sinalizar, adicionar proteção |
+| URL de usuário passada diretamente para fetch/HttpClient sem validação de host | Sinalizar SSRF, adicionar allowlist |
+| @RequestBody mapeado diretamente para entidade com campos sensíveis (role, isAdmin) | Sinalizar mass assignment, criar DTO |
 
 > **Hierarquia de rules:** `seguranca.md` > `pragmatismo.md` > `codigo-operacional.md` > demais rules.

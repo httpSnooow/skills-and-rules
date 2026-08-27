@@ -21,7 +21,9 @@ Os seguintes tipos de anotação **são permitidos** porque têm função técni
 
 1. **Cabeçalhos de licença/copyright** — quando o projeto já os utiliza por convenção ou exigência legal. Não invente um se o projeto não tem.
 
-2. **JSDoc/docstring em API pública exportada** — funções, classes e métodos que são consumidos por outros módulos ou pelo usuário final. Documentar parâmetros, retorno e exceções. Não documentar funções internas ou helpers privados.
+2. **JSDoc/docstring/KDoc em API pública exportada** — funções, classes e métodos que são consumidos por outros módulos ou pelo usuário final. Documentar parâmetros, retorno e exceções. Não documentar funções internas ou helpers privados.
+
+   **Anotações de framework processadas em build time** (ex: `@Operation`, `@Schema`, `@ApiModelProperty` do SpringDoc/Swagger; `@JsonProperty`; anotações de validação como `@field:NotNull`) são **permitidas** — não são comentários explicativos, são metadados consumidos por tooling. Gerar conforme as convenções do projeto.
 
 3. **`// TODO(TICKET-ID): descrição`** — rastreável por ferramenta (deve conter um identificador de issue/ticket). `// TODO: melhorar isso` sem rastreamento é proibido.
 

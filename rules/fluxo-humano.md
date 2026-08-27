@@ -13,4 +13,21 @@
 
 - Em tarefas complexas (multi-arquivo, multi-camada), entregar **uma camada por vez** seguindo a ordem Inside-Out definida em `codigo-operacional.md`.
 - Após cada camada, pausar e perguntar se o usuário quer revisar antes de avançar — não gerar todas as camadas de uma vez em blocos extensos.
-- Se o usuário pedir tudo de uma vez, entregar com separação visual clara entre camadas.
+- Se o usuário pedir tudo de uma vez, entregar com separação visual clara entre camadas (linha `---` entre cada camada, com label do nome da camada).
+
+**Formato de pausa bem executada:**
+
+```
+✅ Camada 1 (Domínio) concluída.
+
+Criei a entidade `Pedido` com as regras de validação de desconto isoladas.
+Decisão tomada: usei `sealed class` para `StatusPedido` — permite exhaustive matching no Kotlin.
+
+Antes de avançar para o Repositório (Camada 2), há algo que você quer ajustar?
+```
+
+**Evitar:** pausas vagas como "Pronto. Posso continuar?" sem resumo do que foi feito.
+
+**Exceção (modo urgência):** Se o usuário indicar urgência explícita ("urgente", "produção caindo",
+"preciso agora"), omitir as pausas e entregar todas as camadas de uma vez com `---` entre elas.
+Manter o Mapa de Passos no início para orientação.

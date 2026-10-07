@@ -2,7 +2,7 @@
 
 ![header](https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=24&height=220&section=header&text=skills%20%26amp;%20rules&fontSize=60&fontColor=ffffff&fontAlignY=38&desc=AI%20Agent%20Customizations%20for%20Antigravity%2C%20Cursor%2C%20Claude%20Code%20%26amp;%20Copilot&descAlignY=58&descSize=15&descColor=c4b5fd)
 
-[![Skills](https://img.shields.io/badge/skills-14-7c3aed?style=flat-square&logo=gitbook&logoColor=white)](./skills)
+[![Skills](https://img.shields.io/badge/skills-15-7c3aed?style=flat-square&logo=gitbook&logoColor=white)](./skills)
 [![Rules](https://img.shields.io/badge/rules-12-06b6d4?style=flat-square&logo=markdown&logoColor=white)](./rules)
 [![Language](https://img.shields.io/badge/lang-pt--BR-10b981?style=flat-square&logo=googletranslate&logoColor=white)]()
 [![Works with Antigravity](https://img.shields.io/badge/Antigravity-compatible-7c3aed?style=flat-square&logo=googlegemini&logoColor=white)]()
@@ -29,7 +29,7 @@ Este repositório contém dois tipos de customizações para agentes de IA:
 
 | Tipo | O que faz | Quantidade |
 |------|-----------|-----------|
-| **Skills** | Cheatsheets sob demanda carregadas pelo agente para workflows especializados (debugging, migrações, revisões…) | 14 |
+| **Skills** | Cheatsheets sob demanda carregadas pelo agente para workflows especializados (debugging, migrações, revisões…) | 15 |
 | **Rules** | Restrições comportamentais sempre ativas que governam cada resposta (segurança, pragmatismo, disciplina de tokens…) | 12 |
 
 Juntas, elas impõem os padrões de engenharia de um **desenvolvedor Staff-level** — em cada sessão, cada agente, cada projeto.
@@ -76,6 +76,7 @@ Skills são conjuntos de instruções especializadas para workflows complexos e 
 | [`documentar-decisao`](./skills/documentar-decisao/) | 📝 Docs | Gera um ADR (Architectural Decision Record) leve para escolhas de design não óbvias. | Ao introduzir uma mudança de padrão ou decisão arquitetural |
 | [`engenharia-de-testes`](./skills/engenharia-de-testes/) | ✅ Testes | Projeta testes robustos focados em edge cases, caminhos negativos e tratamento de erros — além do happy path. | Ao criar ou atualizar arquivos de teste |
 | [`engenharia-de-ui-ux`](./skills/engenharia-de-ui-ux/) | 🎨 UI/UX | Implementa UI/UX seguindo padrões Big Tech: grid de 8px, acessibilidade WCAG, gerenciamento defensivo de estados (loading/error/empty). | Ao criar ou atualizar componentes visuais |
+| [`executor-ready-plans`](./skills/executor-ready-plans/) | 📋 Planejamento | Define o contrato de qualidade de planos de implementação para um modelo executor mais barato ou subagente. | Ao planejar código para ser executado por outro modelo sem contexto |
 | [`explicar-decisao-tecnica`](./skills/explicar-decisao-tecnica/) | 💡 Explicar | Explica a motivação arquitetural, padrões de design e trade-offs por trás de uma decisão de código. | Ao introduzir uma abstração complexa ou responder "por quê" |
 | [`gate-pr`](./skills/gate-pr/) | 🚦 Qualidade | Checklist pré-PR: escopo respeitado, testes passando, sem artefatos de debug, sem dependências não declaradas, sem regressões de segurança. | Antes de considerar qualquer tarefa completa ou abrir um PR |
 | [`mapeamento-de-armadilhas`](./skills/mapeamento-de-armadilhas/) | ⚠️ Risco | Destaca armadilhas comuns de produção, edge cases e anti-patterns associados ao código implementado. | Ao escrever lógica de negócio crítica, operações assíncronas ou acesso a DB |
@@ -195,6 +196,7 @@ skills-and-rules/
 │   ├── documentar-decisao/            # Geração de ADR leve
 │   ├── engenharia-de-testes/          # Engenharia de testes robustos
 │   ├── engenharia-de-ui-ux/           # Padrões de UI/UX Big Tech
+│   ├── executor-ready-plans/          # Planos de implementação executáveis
 │   ├── explicar-decisao-tecnica/      # Explicação de arquitetura
 │   ├── gate-pr/                       # Gate de qualidade pré-PR
 │   ├── mapeamento-de-armadilhas/      # Mapeamento de armadilhas de produção
@@ -256,7 +258,7 @@ This repository contains two types of AI agent customizations:
 
 | Type | What it does | Count |
 |------|-------------|-------|
-| **Skills** | On-demand cheatsheets loaded by the agent for specialized workflows (debugging, migrations, reviews…) | 14 |
+| **Skills** | On-demand cheatsheets loaded by the agent for specialized workflows (debugging, migrations, reviews…) | 15 |
 | **Rules** | Always-on behavioral constraints that govern every response (security, pragmatism, token discipline…) | 12 |
 
 Together, they enforce the engineering standards of a **Staff-level developer** — every session, every agent, every project.
@@ -303,6 +305,7 @@ Skills are specialized instruction sets for complex, repeatable workflows. Each 
 | [`documentar-decisao`](./skills/documentar-decisao/) | 📝 Docs | Generates a lightweight ADR (Architectural Decision Record) for non-obvious design choices. | When introducing a pattern change or architectural decision |
 | [`engenharia-de-testes`](./skills/engenharia-de-testes/) | ✅ Testing | Designs robust tests focusing on edge cases, negative paths, and error handling — beyond the happy path. | When creating or updating test files |
 | [`engenharia-de-ui-ux`](./skills/engenharia-de-ui-ux/) | 🎨 UI/UX | Implements UI/UX following Big Tech standards: 8px grid, WCAG accessibility, defensive state management (loading/error/empty). | When creating or updating visual components |
+| [`executor-ready-plans`](./skills/executor-ready-plans/) | 📋 Planning | Defines the quality contract for implementation plans handed off to a cheaper execution model or subagent. | When planning code to be executed by another model without context |
 | [`explicar-decisao-tecnica`](./skills/explicar-decisao-tecnica/) | 💡 Explain | Explains the architectural motivation, design patterns, and trade-offs behind a coding decision. | When introducing a complex abstraction or answering "why" |
 | [`gate-pr`](./skills/gate-pr/) | 🚦 Quality | Pre-PR checklist: scope respected, tests passing, no debug artifacts, no undeclared dependencies, no security regressions. | Before considering any task complete or opening a PR |
 | [`mapeamento-de-armadilhas`](./skills/mapeamento-de-armadilhas/) | ⚠️ Risk | Highlights common production pitfalls, edge cases, and anti-patterns associated with the implemented code. | When writing core business logic, async operations, or DB access |
@@ -422,6 +425,7 @@ skills-and-rules/
 │   ├── documentar-decisao/            # Lightweight ADR generation
 │   ├── engenharia-de-testes/          # Robust test engineering
 │   ├── engenharia-de-ui-ux/           # Big Tech UI/UX standards
+│   ├── executor-ready-plans/          # Executor-ready implementation plans
 │   ├── explicar-decisao-tecnica/      # Architecture explanation
 │   ├── gate-pr/                       # Pre-PR quality gate
 │   ├── mapeamento-de-armadilhas/      # Production pitfall mapping
